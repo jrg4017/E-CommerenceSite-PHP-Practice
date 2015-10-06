@@ -1,7 +1,8 @@
 
 /************ navigation ***************/
 #currPage{
-
+    color: black;
+    cursor: default; /* somewhat indicates it's not an actual link */
 }
 
 nav{

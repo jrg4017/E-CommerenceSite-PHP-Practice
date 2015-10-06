@@ -7,22 +7,23 @@
     );
 
     //print out the navigation
-    echo "<nav><ul>";
+    echo "<nav class='pure-menu pure-menu-horizontal'><ul class='pure-menu-list'>";
 
     foreach($navArry as $page => $href){
-        $str = "<li><a href='";
+        $str = "<li class='pure-menu-item'><a href='";
         if($page === $curr_page){
-            $str .= "#' id='currPage'"; //TODO currPage css in main? or nav.css?
+            $str .= "#' id='currPage'";
         }else{
-            $str .=  $href . "''"; //TODO add a URL holder here for the href (or in array holder??)
+            $str .=  URL_PAGES .  $href . "'";
         }
 
-        $str .= ">" . $page . "</a></li>";
+        $str .= " class='pure-menu-link'>" . $page . "</a></li>";
 
         echo $str;
 
     }
 
     echo "</ul></nav>";
+
 
 ?>

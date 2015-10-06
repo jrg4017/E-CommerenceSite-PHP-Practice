@@ -7,5 +7,5 @@
 
 <?php
     //include ender with php
-    include "../include/end.php";
+    include "../includes/end.php";
 ?>

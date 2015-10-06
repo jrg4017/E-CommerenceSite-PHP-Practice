@@ -1,10 +1,14 @@
-<!doctype html>
+<?php
+    require_once "page_start.php";
+?>
+
+<!Doctype html>
 
 <html lang="en">
 <head>
   <meta charset="utf-8">
 
-  <title><?php echo $curr_page; ?></title>
+  <title><?php echo "E-Commerence: " . $curr_page; ?></title>
   <meta name="description" content="E-Commerence shop for all your shopping needs">
   <meta name="author" content="Julianna Gabler">
 

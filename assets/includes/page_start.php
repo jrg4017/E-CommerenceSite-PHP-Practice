@@ -6,9 +6,6 @@
     define("URL_JS", URL . "assets/js/");
     define("URL_PAGES", URL . "assets/pages/");
     //define("URL_FONTS", URL . "assets/fonts");
-
-    //declare paths
-    define("PATH", "341/");
-    define("PATH_INC",  PATH . "assets/includes/");
+    define("URL_INC",  URL . "assets/includes/");
 
 ?>
