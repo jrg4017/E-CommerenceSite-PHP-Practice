@@ -3,7 +3,7 @@
     $navArry = array(
         "Home" => "index.php",
         "Cart" => "cart.php",
-        "Login" => "admin.php"
+        "My Account" => "login.php"
     );
 
     //print out the navigation
@@ -12,9 +12,9 @@
     foreach($navArry as $page => $href){
         $str = "<li><a href='";
         if($page === $curr_page){
-            $str .= "#' id='currpage'";
+            $str .= "#' id='currPage'"; //TODO currPage css in main? or nav.css?
         }else{
-            $str .= $href . "''";
+            $str .=  $href . "''"; //TODO add a URL holder here for the href (or in array holder??)
         }
 
         $str .= ">" . $page . "</a></li>";

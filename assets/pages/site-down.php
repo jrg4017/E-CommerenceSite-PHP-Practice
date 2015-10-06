@@ -1,6 +1,11 @@
 <?php
     //null = no custom css
-    $css_custom = null;
+    $css = array("site-down.css");
     //set up the framework for the html header
     include "../includes/header.php";
+?>
+
+<?php
+    //include ender with php
+    include "../include/end.php";
 ?>
