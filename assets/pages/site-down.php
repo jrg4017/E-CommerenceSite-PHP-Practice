@@ -2,7 +2,7 @@
     //null = no custom css
     $css = array("site-down.css");
     //set up the framework for the html header
-    include "../includes/header.php";
+    include "../includes/HTML_template.php";
 ?>
 
 <?php

@@ -2,7 +2,7 @@
     $css = array("main.css", "pure-css.css");
     $curr_page = "Cart";
     //set up the framework for the html header
-    include "../includes/header.php";
+    include "../includes/HTML_template.php";
 ?>
 
 <?php
