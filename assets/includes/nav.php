@@ -1,7 +1,7 @@
 <?php
 
     $navArry = array(
-        "Home" => "index.php",
+        "Home" => "index.php?page=1",
         "Cart" => "cart.php",
         "My Account" => "login.php"
     );

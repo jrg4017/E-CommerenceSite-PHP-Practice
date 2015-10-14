@@ -35,14 +35,14 @@
             $startIndex = $endIndex - 5;
 
             for($i = $startIndex; $i < $endIndex; $i++ ){
-                $results[] = $this->itemsArray[$i];
+                if($this->itemsArray[$i] != null) {$results[] = $this->itemsArray[$i];}
             }
 
             return $results;
 
         }//end getData function
 
-        public function createPages($page){
+        public function createPageLink($page){
             //TODO just do get next five pages instead of pagination @ bottom
 
             //set the last available pagination page
@@ -55,27 +55,26 @@
                 $html .= "<li";
 
                 //show active page
-                if($page == $i){ $html .= "class='active'"; }
+                if($page == ($i + 1)){ $html .= " class='active' "; }
 
-                $html .= "><a href='#' onclick='<?php $paginator->setPage(" . $i . "); ?>'>" . $i . "</a></li>";
+                $html .= "><a href='?page=" . ($i+1) ."'>" . ($i + 1). "</a></li>";
             }
 
+            $html .="</ul>";
 
             return $html;
         }//end createLink
 
         public function displayPagination($currPage, $sale){
-            $css_arr = array(4 => 3, 5 =>2);
+            $css_arr = array(1=>6, 2=>5, 3=>4, 4 => 3, 5 =>2);
             $html = "<div class='row'>";
 
+             //get the info to display
             $results = $this->getData($currPage);
-            if($sale == true) { $count = count($results) -1 ; }
-            else{$count = count($results);}
+           $count = count($results);
 
             for($i  = 0; $i < $count; $i++){
                 $obj = (object)$results[$i];
-
-               // if($sale == true){ $count -= 1; }
 
                 $html .= "<div class='col-sm-" .$css_arr[$count] ." inventoryItem'>";
 
@@ -90,7 +89,9 @@
             }
 
             $html .= "</div>";
-
+            if($sale == false){
+                $html .= $this->createPageLink($currPage);
+            }
             return $html;
         }//end displayPagination
     }//end class

@@ -15,7 +15,7 @@
 
 
     //create the $pageHTML to print out
-    $pageHTML = "<div class='container'><h1>Welcome to MicroController Center! </h1> <div class='jumbotron'><h2>Items on SALE</h2><div id='forSale'>";
+    $pageHTML = "<div class='container'><h1>Welcome to the MicroController Center! </h1> <div class='jumbotron'><h2>Items on SALE</h2><div id='forSale'>";
 
     //get sale items, 1== true
     $sale = getInventory($dbh, 1);
@@ -28,7 +28,7 @@
     //get items not on sale, 0 == false
     $notSale = getInventory($dbh, 0);
     $itemsDiv = new Paginator($notSale);
-    $pageHTML .= $itemsDiv->displayPagination(1, false);
+    $pageHTML .= $itemsDiv->displayPagination($_GET["page"], false);
 
     $pageHTML .= "</div></div></div>";
 
