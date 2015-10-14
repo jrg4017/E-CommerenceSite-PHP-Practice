@@ -2,11 +2,14 @@
     require_once "../includes/LIB-project1.php";
     require_once "../includes/Paginator.class.php";
 
-
+    //open connection
     $dbh = openDBH();
 
-    if($dbh === null){
-        echo "is null";
+    if(isset($_GET['addToCart'])){
+        addToCart($dbh, $_GET['addToCart']);
+        echo $_GET['addToCart'];
+        unset($_GET['addToCart']); //unset it so it'll pick up future ones
+        echo $_GET['addToCart'];
     }
     //null = no custom css
     $css = array("main.css", "bootstrap.min.css");
@@ -23,11 +26,15 @@
     $saleDiv = new Paginator($sale);
     $pageHTML .= $saleDiv->displayPagination(1, true);
 
-    $pageHTML .= "</div></div><div class='jumbotron'><h2>MicroControllers</h2><div id='inventory'>";
+    $pageHTML .= "</div></div><div class='jumbotron'><h2>MicroControllers Catalog</h2><div id='inventory'>";
 
     //get items not on sale, 0 == false
     $notSale = getInventory($dbh, 0);
     $itemsDiv = new Paginator($notSale);
+
+    //default if not exists
+    if(!isset($_GET['page'])){ $_GET['page'] = 1; }
+
     $pageHTML .= $itemsDiv->displayPagination($_GET["page"], false);
 
     $pageHTML .= "</div></div></div>";

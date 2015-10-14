@@ -37,7 +37,7 @@ function openDBH(){
  * @param $param - the params to use, array s
  * @return string - the string msg to return
  */
-function updateDelete($dbh, $query, $param){
+function updateDeleteInsert($dbh, $query, $param){
     //query function
     try { //TODO see if item exists first
         $stmnt = $dbh->prepare($query);
@@ -50,11 +50,11 @@ function updateDelete($dbh, $query, $param){
         return $msg;
 
     }catch(PDOException $e){
-        //TODO look into duplicate testing to catch error
         $msg = "Error with operation, Please try again later";
         return $msg;
     }
-}//end updateDelete
+}//end updateDeleteInsert
+
 
 
 /**
@@ -73,6 +73,38 @@ function getSalesCount($dbh){
     //return the number of rows already a sales item
     return $stmt->rowCount();
 }//end getSalesCount
+
+/**
+ * check to see if variable exists and return true if does (greater than 0 returned)
+ * return false if 0
+ * @param $dbh
+ * @param $query
+ * @param $params
+ * @return mixed - return the number of rows
+ */
+function checkExists($dbh, $query, $params){
+    try{
+        $stmnt = $dbh->prepare($query);
+
+        foreach($params as $key => $val){
+            $stmnt->bindParam($key, $val);
+        }
+
+        $stmnt->execute();
+
+        $count = $stmnt->rowCount();
+
+        if($count > 0){
+            //get the variable requested and return it, else return 0
+            $rs = $stmnt->fetchAll();
+            $result = $rs[0]["quantity"];
+            return $result;
+        }
+        else{ return 0; }
+    }catch(PDOException $e){
+        return 0;
+    }
+}//end checkExists
 
 /**********************************************************************************/
 /******** SALE ITEM FUNCTIONS ****************************************************/
@@ -96,31 +128,6 @@ function validateSales($dbh){
     return true;
 }//close validateSales
 
-///**
-// * gets the current sale items in the database and
-// * returns an array of Inventory Item Objects
-// * @param $dbh - the connection obj
-// * @return array - the array of Inventory Item objects
-// */
-//function getSaleItems($dbh){
-//    //prepare the array to save objects in
-//    $sale = array();
-//
-//    //prepare the query and save as a result
-//    $stmnt = $dbh->prepare("SELECT t1.name,  t1.image, t2.price, t1.description, t2.quantity, t3.onsale, t3.salePrice FROM ITEM t1 JOIN INVENTORY t2 ON t1.itemId = t2.itemId JOIN ITEMSALE t3 ON t2.itemId = t3.itemId WHERE t3.onsale = 1");
-//    $stmnt->execute();
-//
-//    //grab result and load the neccessary information into the object and array
-//    while($result = $stmnt->fetch(PDO::FETCH_ASSOC)){
-//        //load
-//        $obj = new InventoryItem($result);
-//
-//        $sale[] = $obj;
-//    }//close while
-//
-//    return $sale;
-//}//end getSaleItems
-
 /**
  * updates a current inventory item to onsale = true
  * validates parameters are met and then returns a message based on
@@ -138,10 +145,10 @@ function addSalesItem($dbh, $params){
     if ($valid !== true){ return $valid; }
 
     //preload query
-    $query = "UPDATE ITEMSALE SET onsale = true WHERE name = :name";
+    $query = "UPDATE itemsale SET onsale = true WHERE name = :name";
 
     //update the item to the sales inventory or print the returned message
-    $msg = updateDelete($dbh, $query, $params);
+    $msg = updateDeleteInsert($dbh, $query, $params);
 
     return $msg;
 }//end addSalesItem
@@ -162,12 +169,11 @@ function removeSalesItem($dbh, $param){
     //preload query
     $query = "UPDATE INVENTORY SET onsale = false WHERE name = :name";
 
-    $msg = updateDelete($dbh, $query, $param);
+    $msg = updateDeleteInsert($dbh, $query, $param);
 
     return $msg;
 }//end removeSalesItem
 
-//TODO display sales function or on page??
 
 /**********************************************************************************/
 /******** REGULAR ITEM FUNCTIONS **************************************************/
@@ -199,29 +205,35 @@ function getInventory($dbh, $isSale){
 
     return $array;
 }//end getInventory
-
+/**********************************************************************************/
+/******** CART FUNCTIONS **********************************************************/
+/**********************************************************************************/
 /**
  * adds or updates item in cart
  * @param $dbh
- * @param $obj
+ * @param $id
  */
-function addToCart($dbh, $obj){
+function addToCart($dbh, $id){
+    //array
+    $id = $_GET['addToCart'];
+    $params = array(":id" => $id);
     //check to see item exists to update count
-    $num = checkExists($dbh);
+    $num = checkExists($dbh, "SELECT quantity FROM cart WHERE itemId = :id", $params );
     //if item doesn't exist, insert into table
-    if($num ==0 ){ $query = "INSERT INTO CART (id, quantity) VALUES(:id, 1)"; }
-    //does exist, update table to quantity
-    else{ $query = "UPDATE CART SET quantity = :quantity WHERE id = :id";
+    if($num == 0 ){
+        $quantity = $num +1;
+        $query = "insert into cart (itemid, quantity) values (:id,:quantity)";
+        $param= array(":id" => $id, ":quantity"=> $quantity);
+        updateDeleteInsert($dbh, $query, $param);
+    }
+    //does exist, update table to quantity using updateDeleteInsert function and array of params
+    else{
             $quantity = $num + 1;
+            $query = "UPDATE cart SET quantity = :quantity WHERE itemId = :id";
+            $params = array(":quantity" => $quantity, ":id" => $id);
+            updateDeleteInsert($dbh, $query, $params);
+
+
     }
-
-    $stmnt = $dbh->prepare($query);
-    $stmnt->bindParam(":id", $obj->getId());
-
-    //if num was greater than 0, bind quantity param
-    if($num > 0){
-        $stmnt->bindParam(":quantity", $quantity);
-    }
-
-    $stmnt->execute();
 }//end addToCart
+

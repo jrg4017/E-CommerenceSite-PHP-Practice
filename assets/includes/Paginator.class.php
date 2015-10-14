@@ -23,7 +23,7 @@
          * @param $page
          * @return array
          */
-        public function getData($page){
+        public function getData($page = 1){
             $this->page = $page; //starts at 1
 
             //empty results array to contain the objects for display
@@ -42,7 +42,12 @@
 
         }//end getData function
 
-        public function createPageLink($page){
+        /**
+         *
+         * @param int $page - default is one
+         * @return string
+         */
+        public function createPageLink($page = 1){
             //TODO just do get next five pages instead of pagination @ bottom
 
             //set the last available pagination page
@@ -65,7 +70,12 @@
             return $html;
         }//end createLink
 
-        public function displayPagination($currPage, $sale){
+        /**
+         * @param int $currPage - default is one
+         * @param $sale
+         * @return string
+         */
+        public function displayPagination($currPage =1, $sale){
             $css_arr = array(1=>6, 2=>5, 3=>4, 4 => 3, 5 =>2);
             $html = "<div class='row'>";
 
@@ -78,17 +88,17 @@
 
                 $html .= "<div class='col-sm-" .$css_arr[$count] ." inventoryItem'>";
 
-                $html .= "<a href='". $obj->getImage() . "'><img src='" . $obj->getImage(). "' alt='" . $obj->getName() . "' height='150' width='200' /></a>";
+                $html .= "<form action=''><a href='". $obj->getImage() . "'><img src='" . $obj->getImage(). "' alt='" . $obj->getName() . "' height='150' width='200' /></a>";
                 $html .= "<h3>" . $obj->getName() . "</h3>";
                 $html .= "<span> <em>Original price:</em> $" . $obj->getPrice() . "</span>";
                 $html .= "<br><span><em>Sale Price:</em> $" . $obj->getSalePrice() . "</span>";
                 $html .= "<br><span><em>Quantity:</em> " . $obj->getQuantity() . "</span>";
                 $html .= "<br><span><em>Description:</em> " . $obj->getDescription() . "</span>";
-                $html .= "<br><br><button class='btn btn-primary'>Add to Cart</button>";
+                $html .= "<br><br><button class='btn btn-primary'  name='addToCart' value='" . $obj->getId() . "' >Add to Cart</button>";
                 $html .= "</div>";
             }
 
-            $html .= "</div>";
+            $html .= "</form></div>";
             if($sale == false){
                 $html .= $this->createPageLink($currPage);
             }
