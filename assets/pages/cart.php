@@ -1,5 +1,5 @@
 <?php
-    $css = array("main.css", "pure-css.css");
+    $css = array("main.css", "bootstrap.min.css");
     $curr_page = "Cart";
     //set up the framework for the html header
     include "../includes/HTML_template.php";

@@ -5,12 +5,9 @@
     cursor: default; /* somewhat indicates it's not an actual link */
 }
 
-nav{
-
-}
-
-nav ul li{
-
+#navHeader{
+    font-weight: bold;
+    color: royalblue;
 }
 
 /*****************************************/
