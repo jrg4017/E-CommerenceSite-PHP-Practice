@@ -42,29 +42,26 @@ function openDBH($host, $db, $pass, $user){
  * @param $param - the params to use, array s
  * @return string - the string msg to return
  */
-function update($dbh, $query, $param){
+function updateDelete($dbh, $query, $param){
     //query function
     try { //TODO see if item exists first
         $stmnt = $dbh->prepare($query);
         //$stmnt->bindValue($params); //TODO find out if okay to bind value to param without ":name"
         $stmnt->execute($param);
 
-        $msg = "Update was successful!";
+        $count = $stmnt->rowCount();
+
+        $msg = "$count entries were updated.";
 
         return $msg;
 
     }catch(PDOException $e){
-        //TODO print out message
+        //TODO look into duplicate testing to catch error
+        $msg = "Error with operation, Please try again later";
+        return $msg;
     }
-}//end update
+}//end updateDelete
 
-function delete($dbh){
-
-}
-
-function add($dbh){
-
-}
 
 /**
  * gets the number of current
@@ -88,27 +85,18 @@ function getSalesCount($dbh){
 /*********************************************************************************/
 
 /**
- * designed to get all items marked as "ON SALE" in the database
- * returns an array of objects containing the item's information
- */
-function displaySales($dbh){
-    //get sales items and
-    $salesItems = getSaleItems($dbh);
-
-}
-/**
  * validates that the number of items on sale
  *      no more than 5 items
  *      no less than 3 items
  * @param $dbh - the current db connection
- * @return bool
+ * @return mixed;
  */
 function validateSales($dbh){
     $count = getSalesCount($dbh);
     //if the count is 5 or greater, item cannot be added as on sale
     //if count is 3 or less, item cannot be subtracted
     if($count <= 5 || $count <=3){
-        return false;
+        return "You have " . $count . " items on sale. <br> You must have at least 3 items on sale. <br> You cannot have more than 5 items";
     }
     //default if the if statement not called
     return true;
@@ -151,22 +139,66 @@ function getSaleItems($dbh){
  */
 function addSalesItem($dbh, $params){
     $valid = validateSales($dbh);
-    //empty string
-    $string = "";
 
     //push out failed message
-    if ($valid == false){
-        $count = getSalesCount($dbh);
-        $string = "You have " . $count . " items on sale. <br> You must have at least 3 items on sale. <br> You cannot have more than 5 items";
-        return $string;
-    }
+    if ($valid !== true){ return $valid; }
 
-    $query = "UPDATE INVENTORY SET onsale = true WHER name= :name";
+    //preload query
+    $query = "UPDATE INVENTORY SET onsale = true WHERE name= :name";
 
     //update the item to the sales inventory or print the returned message
-    $string = update($dbh, $query, $params);
+    $msg = updateDelete($dbh, $query, $params);
 
-    return $string;
+    return $msg;
 }//end addSalesItem
 
+/**
+ * removes the item from the sales category but not from the database
+ *      sales items parameters has to be met in order for removal
+ *          no less than 3 items and no more than 5
+ * @param $dbh
+ * @param $paran
+ * @return mixed|string
+ */
+function removeSalesItem($dbh, $param){
+    $valid = validateSales($dbh);
 
+    if($valid !== true){ return $valid;}
+
+    //preload query
+    $quuery = "UPDATE INVENTORY SET onsale = false WHERE name = :name";
+
+    $msg = updateDelete($dbh, $quuery, $param);
+
+    return $msg;
+}//end removeSalesItem
+
+//TODO display sales function or on page??
+
+/**********************************************************************************/
+/******** REGULAR ITEM FUNCTIONS **************************************************/
+/**********************************************************************************/
+/**
+ * gets the inventory items requested, based on desired sale or not on sale items
+ * @param $dbh - the current db connection
+ * @param $isSale - whether on sale items are desire or not (bool)
+ * @return array - the array of InventoryItem objects
+ */
+function getInventory($dbh, $isSale){
+
+    //get all items not on sale and return
+    $stmnt = $dbh->prepare("SELECT name, price, image, description, quantity FROM Inventory WHERE onsale = :onsale");
+    $stmnt->bindValue(":onsale", $isSale);
+    $rs = $stmnt->execute();
+
+    //empty array
+    $array = array();
+
+    while($result = $rs->fetch(PDO::FETCH_ASSOC)){
+        $obj = new InventoryItem($result);
+
+        $array[] = $obj;
+    }
+
+    return $array;
+}//end getInventory
