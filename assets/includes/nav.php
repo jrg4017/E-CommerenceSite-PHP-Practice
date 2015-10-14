@@ -20,7 +20,7 @@
         if($page === $curr_page){
             $str .= "#' id='currPage'";
         }else{
-            $str .=  URL_PAGES .  $href . "'";
+            $str .=   $href . "'";
         }
 
         $str .= " class='pure-menu-link'>" . $page . "</a></li>";

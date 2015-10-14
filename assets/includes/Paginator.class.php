@@ -75,14 +75,14 @@
          * @param $sale
          * @return string
          */
-        public function displayPagination($currPage =1, $sale){
+        public function displayPagination($currPage =1, $sale, $cart){
             $css_arr = array(1=>6, 2=>5, 3=>4, 4 => 3, 5 =>2);
             $html = "<div class='row'>";
 
              //get the info to display
             $results = $this->getData($currPage);
            $count = count($results);
-
+            if($cart === true){ $html .= "<form action=''>";}
             for($i  = 0; $i < $count; $i++){
                 $obj = (object)$results[$i];
 
@@ -94,10 +94,12 @@
                 $html .= "<br><span><em>Sale Price:</em> $" . $obj->getSalePrice() . "</span>";
                 $html .= "<br><span><em>Quantity:</em> " . $obj->getQuantity() . "</span>";
                 $html .= "<br><span><em>Description:</em> " . $obj->getDescription() . "</span>";
-                $html .= "<br><br><button class='btn btn-primary'  name='addToCart' value='" . $obj->getId() . "' >Add to Cart</button>";
+                //if for cart page, don't show
+                if($cart != true) { $html .= "<br><br><button class='btn btn-primary'  name='addToCart' value='" . $obj->getId() . "' >Add to Cart</button>"; }
                 $html .= "</div>";
             }
-
+            //TODO get cart to clear
+                if($cart === true){ $html .= "</form><div class='col-lg-6'><button class='btn btn-primary'  name='clearCart' value='clear' >Empty Cart</button></div>";}
             $html .= "</form></div>";
             if($sale == false){
                 $html .= $this->createPageLink($currPage);

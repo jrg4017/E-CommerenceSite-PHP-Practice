@@ -24,9 +24,9 @@
     $sale = getInventory($dbh, 1);
     //print out items into the correct div
     $saleDiv = new Paginator($sale);
-    $pageHTML .= $saleDiv->displayPagination(1, true);
+    $pageHTML .= $saleDiv->displayPagination(1, true, false);
 
-    $pageHTML .= "</div></div><div class='jumbotron'><h2>MicroControllers Catalog</h2><div id='inventory'>";
+    $pageHTML .= "</div></div><div class='jumbotron'><h2>MicroControllers Catalog</h2>";
 
     //get items not on sale, 0 == false
     $notSale = getInventory($dbh, 0);
@@ -35,9 +35,9 @@
     //default if not exists
     if(!isset($_GET['page'])){ $_GET['page'] = 1; }
 
-    $pageHTML .= $itemsDiv->displayPagination($_GET["page"], false);
+    $pageHTML .= $itemsDiv->displayPagination($_GET["page"], false, false);
 
-    $pageHTML .= "</div></div></div>";
+    $pageHTML .= "</div></div>";
 
     //include the template
     include "../includes/HTML_template.php";

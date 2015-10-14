@@ -187,7 +187,10 @@ function removeSalesItem($dbh, $param){
 function getInventory($dbh, $isSale){
 
     //get all items not on sale and return
-    $stmnt = $dbh->prepare("SELECT t1.itemid, t1.name,  t1.image, t2.price, t1.description, t2.quantity, t3.onsale, t3.salePrice FROM item t1 JOIN inventory t2 ON t1.itemId = t2.itemId JOIN itemsale t3 ON t2.itemId = t3.itemId WHERE t3.onsale = :onsale");
+    $stmnt = $dbh->prepare("SELECT t1.itemid, t1.name,  t1.image, t2.price, t1.description,
+                            t2.quantity, t3.onsale, t3.salePrice FROM item t1 JOIN inventory
+                            t2 ON t1.itemId = t2.itemId JOIN itemsale t3 ON t2.itemId = t3.itemId
+                            WHERE t3.onsale = :onsale");
     $stmnt->bindParam(":onsale", $isSale);
     $stmnt->execute();
 
@@ -215,24 +218,47 @@ function getInventory($dbh, $isSale){
  */
 function addToCart($dbh, $id){
 
-    $params = array(":id" => $id);
+    $param = array(":id" => $id);
     //check to see item exists to update count
-    $num = checkExists($dbh, "SELECT quantity FROM cart WHERE itemId = :id", $params );
+    $num = checkExists($dbh, "SELECT quantity FROM cart WHERE itemId = :id", $param );
     //if item doesn't exist, insert into table
-    if($num == 0 ){
-        $quantity = $num +1;
-        $query = "insert into cart (itemid, quantity) values (:id,:quantity)";
-        $param= array(":id" => $id, ":quantity"=> $quantity);
-        updateDeleteInsert($dbh, $query, $param);
-    }
+
+    $quantity = $num + 1;
+    $params= array(":id" => $id, ":quantity"=> $quantity);
+    if($num == 0 ){ $query = "insert into cart (itemid, quantity) values (:id,:quantity)"; }
     //does exist, update table to quantity using updateDeleteInsert function and array of params
-    else{
-            $quantity = $num + 1;
-            $query = "UPDATE cart SET quantity = :quantity WHERE itemId = :id";
-            $params = array(":quantity" => $quantity, ":id" => $id);
-            updateDeleteInsert($dbh, $query, $params);
+    else{ $query = "UPDATE cart SET quantity = :quantity WHERE itemId = :id"; }
 
+    updateDeleteInsert($dbh, $query, $params);
 
-    }
+    //no matter what subtract one from item quantity
+    $query = "UPDATE inventory SET quantity = :quantity WHERE itemid = :id";
+    $quantity = (checkExists($dbh, "SELECT quantity FROM inventory WHERE itemid = :id", $param)) -1 ;
+    $params = array(":id"=> $id, ":quantity"=>$quantity);
+    updateDeleteInsert($dbh, $query, $params);
 }//end addToCart
+
+function displayCart($dbh){
+    $stmt = $dbh->prepare("SELECT t1.itemid, t1.name,  t1.image, t2.price, t1.description,
+                            t4.quantity, t3.onsale, t3.salePrice FROM cart t4
+                            JOIN item t1 ON t4.itemId = t1.itemId
+                            JOIN inventory t2 ON t1.itemId = t2.itemId
+                            JOIN itemsale t3 ON t2.itemId = t3.itemId");
+
+    $stmt->execute();
+    $rs = $stmt->fetchAll();
+    //empty cart as array
+    $cart = array();
+    foreach($rs as $result){
+        $obj = new InventoryItem($result);
+        $cart[] = $obj;
+    }
+
+    $cartDiv = new Paginator($cart);
+    if(!isset($_GET['page'])){ $_GET['page'] = 1; }
+    $pageHTML = $cartDiv->displayPagination($_GET['page'], false, true);
+
+    return $pageHTML;
+
+}
 
