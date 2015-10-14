@@ -11,21 +11,15 @@ include "InventoryItem.class.php";
 /******** Database ****************************************************/
 /*********************************************************************************/
 
-//the database information to connect are located elsewhere for security reasons
-//include "../../../../db_info.php";
-
-    $db =   "jrg4017";
-    $user = "jrg4017";
-    $pass = "fr1end";
-    $host = "localhost"; //TODO get host
-
-    //function to open db connection
 /**
  * opens a database connection object and returns it
  * if the database fails to open, returns null and program catches later
  * @return PDO
  */
-function openDBH($host, $db, $pass, $user){
+function openDBH(){
+
+    require_once "../../../../db_info.php";
+
     try {
         $dbh = new PDO("mysql:host=$host;dbname=$db", $user, $pass); //TODO look up correct string usuage for dsn as it's changed
         return $dbh;
@@ -102,30 +96,30 @@ function validateSales($dbh){
     return true;
 }//close validateSales
 
-/**
- * gets the current sale items in the database and
- * returns an array of Inventory Item Objects
- * @param $dbh - the connection obj
- * @return array - the array of Inventory Item objects
- */
-function getSaleItems($dbh){
-    //prepare the array to save objects in
-    $sale = array();
-
-    //prepare the query and save as a result
-    $stmnt = $dbh->prepare("SELECT t1.name,  t1.image, t2.price, t1.description, t2.quantity, t3.onsale, t3.salePrice FROM ITEM t1 JOIN INVENTORY t2 ON t1.itemId = t2.itemId JOIN ITEMSALE t3 ON t2.itemId = t3.itemId WHERE t3.onsale = 1");
-    $stmnt->execute();
-
-    //grab result and load the neccessary information into the object and array
-    while($result = $stmnt->fetch(PDO::FETCH_ASSOC)){
-        //load
-        $obj = new InventoryItem($result);
-
-        $sale[] = $obj;
-    }//close while
-
-    return $sale;
-}//end getSaleItems
+///**
+// * gets the current sale items in the database and
+// * returns an array of Inventory Item Objects
+// * @param $dbh - the connection obj
+// * @return array - the array of Inventory Item objects
+// */
+//function getSaleItems($dbh){
+//    //prepare the array to save objects in
+//    $sale = array();
+//
+//    //prepare the query and save as a result
+//    $stmnt = $dbh->prepare("SELECT t1.name,  t1.image, t2.price, t1.description, t2.quantity, t3.onsale, t3.salePrice FROM ITEM t1 JOIN INVENTORY t2 ON t1.itemId = t2.itemId JOIN ITEMSALE t3 ON t2.itemId = t3.itemId WHERE t3.onsale = 1");
+//    $stmnt->execute();
+//
+//    //grab result and load the neccessary information into the object and array
+//    while($result = $stmnt->fetch(PDO::FETCH_ASSOC)){
+//        //load
+//        $obj = new InventoryItem($result);
+//
+//        $sale[] = $obj;
+//    }//close while
+//
+//    return $sale;
+//}//end getSaleItems
 
 /**
  * updates a current inventory item to onsale = true
@@ -188,16 +182,19 @@ function getInventory($dbh, $isSale){
 
     //get all items not on sale and return
     $stmnt = $dbh->prepare("SELECT t1.name,  t1.image, t2.price, t1.description, t2.quantity, t3.onsale, t3.salePrice FROM item t1 JOIN inventory t2 ON t1.itemId = t2.itemId JOIN itemsale t3 ON t2.itemId = t3.itemId WHERE t3.onsale = :onsale");
-    $stmnt->bindValue(":onsale", $isSale);
-    $rs = $stmnt->execute();
+    $stmnt->bindParam(":onsale", $isSale);
+    $stmnt->execute();
 
     //empty array
-    $array = array();
+    $array = array(1);
 
-    while($result = $rs->fetch(PDO::FETCH_ASSOC)){
-        $obj = new InventoryItem($result);
+    $result = $stmnt->fetchAll();
 
-        $array[] = $obj;
+    foreach($result as $row){
+
+        $obj = new InventoryItem($row);
+
+        //$array[] = $obj;
     }
 
     return $array;

@@ -1,7 +1,3 @@
-<?php
-    require_once "page_start.php";
-?>
-
 <!Doctype html>
 
 <html lang="en">

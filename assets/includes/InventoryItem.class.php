@@ -16,8 +16,8 @@ class InventoryItem{
 
         //set values
         $this->name = $arr[0];
-        $this->price = $arr[1];
-        $this->image = $arr[2];
+        $this->image = $arr[1];
+        $this->price = $arr[2];
         $this->description = $arr[3];
         $this->quantity = $arr[4];
         $this->onSale = $arr[5];
@@ -85,10 +85,11 @@ class InventoryItem{
          * subtract % from 1 to get what the total sale price is
          * aka .9 * 10 = 9 is the equivalent of .1 * 10 = 1, then 10-1 = 9
         */
-        if($onsale == 1) {
+        if($this->onsale == 1) {
             $percent = 1 - ($this->salePrice * .01);
             $actualSalePrice = $this->price * $percent;
-        }else{ $actualSalePrice = $this->price; }
+        }else{ $actualSalePrice = 0; }
+
         return $actualSalePrice;
     }//end getSalePrice
     /**************** FUNCTIONS *****************************************/
