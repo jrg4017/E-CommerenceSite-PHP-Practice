@@ -6,15 +6,10 @@
  * to be displayed on the e-commerence site
  */
 class InventoryItem{
-    private $name,$price,$image,$description,$quantity;
+    private $name,$price,$image,$description,$quantity,$onSale,$salePrice;
 
     /**
-     * set the object values
-     * @param $name
-     * @param $price
-     * @param $image
-     * @param $description
-     * @param $quantity
+     * @param $arr
      */
     public function __construct($arr){
         //TODO pass in as an array and iterate? for cleaner code??
@@ -25,7 +20,8 @@ class InventoryItem{
         $this->image = $arr[2];
         $this->description = $arr[3];
         $this->quantity = $arr[4];
-
+        $this->onSale = $arr[5];
+        $this->salePrice = $arr[6];
     }//close __construct
 
     //TODO magic accessors / modifers? ask professor if okay to shorten code??
@@ -51,6 +47,14 @@ class InventoryItem{
         $this->quantity = $quantity;
     }//end setQuantity
 
+    public function setSalePrice($salePrice){
+        $this->salePrice = $salePrice;
+    }//end setSalePrice
+
+    public function setOnSale($onSale){
+        $this->onSale = $onSale;
+    }//end setOnSale
+
     /**************** ACCESSORS *****************************************/
     public function getName(){
         return $this->name;
@@ -72,6 +76,21 @@ class InventoryItem{
         return $this->quantity;
     }//end getQuantity
 
+    public function getOnSale(){
+        return $this->onSale;
+    }//end get OnSale
+
+    public function getSalePrice(){
+        /* sale price is consider to be a percentage off so 10 -> 10% off
+         * subtract % from 1 to get what the total sale price is
+         * aka .9 * 10 = 9 is the equivalent of .1 * 10 = 1, then 10-1 = 9
+        */
+        if($onsale == 1) {
+            $percent = 1 - ($this->salePrice * .01);
+            $actualSalePrice = $this->price * $percent;
+        }else{ $actualSalePrice = $this->price; }
+        return $actualSalePrice;
+    }//end getSalePrice
     /**************** FUNCTIONS *****************************************/
 
 }//end InventoryItem class

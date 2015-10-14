@@ -1,4 +1,5 @@
 <?php
+
 //include the InventoryItem class for use
 include "InventoryItem.class.php";
 
@@ -13,7 +14,7 @@ include "InventoryItem.class.php";
 //the database information to connect are located elsewhere for security reasons
 //include "../../../../db_info.php";
 
-    $db = "jrg4017";
+    $db =   "jrg4017";
     $user = "jrg4017";
     $pass = "fr1end";
     $host = "localhost"; //TODO get host
@@ -46,7 +47,6 @@ function updateDelete($dbh, $query, $param){
     //query function
     try { //TODO see if item exists first
         $stmnt = $dbh->prepare($query);
-        //$stmnt->bindValue($params); //TODO find out if okay to bind value to param without ":name"
         $stmnt->execute($param);
 
         $count = $stmnt->rowCount();
@@ -70,7 +70,7 @@ function updateDelete($dbh, $query, $param){
  */
 function getSalesCount($dbh){
     //prepare query and
-    $query = "SELECT name FROM Inventory WHERE onsale = true";
+    $query = "SELECT name FROM ITEMSALE WHERE onsale = true";
 
     //prepare and run
     $stmt = $dbh->prepare($query);
@@ -113,7 +113,7 @@ function getSaleItems($dbh){
     $sale = array();
 
     //prepare the query and save as a result
-    $stmnt = $dbh->prepare("SELECT name, price, image, description, quantity FROM Inventory WHERE onsale = true");
+    $stmnt = $dbh->prepare("SELECT t1.name,  t1.image, t2.price, t1.description, t2.quantity, t3.onsale, t3.salePrice FROM ITEM t1 JOIN INVENTORY t2 ON t1.itemId = t2.itemId JOIN ITEMSALE t3 ON t2.itemId = t3.itemId WHERE t3.onsale = 1");
     $stmnt->execute();
 
     //grab result and load the neccessary information into the object and array
@@ -144,7 +144,7 @@ function addSalesItem($dbh, $params){
     if ($valid !== true){ return $valid; }
 
     //preload query
-    $query = "UPDATE INVENTORY SET onsale = true WHERE name= :name";
+    $query = "UPDATE ITEMSALE SET onsale = true WHERE name = :name";
 
     //update the item to the sales inventory or print the returned message
     $msg = updateDelete($dbh, $query, $params);
@@ -166,9 +166,9 @@ function removeSalesItem($dbh, $param){
     if($valid !== true){ return $valid;}
 
     //preload query
-    $quuery = "UPDATE INVENTORY SET onsale = false WHERE name = :name";
+    $query = "UPDATE INVENTORY SET onsale = false WHERE name = :name";
 
-    $msg = updateDelete($dbh, $quuery, $param);
+    $msg = updateDelete($dbh, $query, $param);
 
     return $msg;
 }//end removeSalesItem
@@ -187,7 +187,7 @@ function removeSalesItem($dbh, $param){
 function getInventory($dbh, $isSale){
 
     //get all items not on sale and return
-    $stmnt = $dbh->prepare("SELECT name, price, image, description, quantity FROM Inventory WHERE onsale = :onsale");
+    $stmnt = $dbh->prepare("SELECT t1.name,  t1.image, t2.price, t1.description, t2.quantity, t3.onsale, t3.salePrice FROM item t1 JOIN inventory t2 ON t1.itemId = t2.itemId JOIN itemsale t3 ON t2.itemId = t3.itemId WHERE t3.onsale = :onsale");
     $stmnt->bindValue(":onsale", $isSale);
     $rs = $stmnt->execute();
 
