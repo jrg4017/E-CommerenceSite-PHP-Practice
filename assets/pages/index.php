@@ -5,13 +5,13 @@
     //open connection
     $dbh = openDBH();
 
+    //if set, add to cart and unset variable for future use
     if(isset($_GET['addToCart'])){
         addToCart($dbh, $_GET['addToCart']);
-        echo $_GET['addToCart'];
         unset($_GET['addToCart']); //unset it so it'll pick up future ones
-        echo $_GET['addToCart'];
     }
-    //null = no custom css
+
+    //null = css files
     $css = array("main.css", "bootstrap.min.css");
 
     $curr_page = "Home"; //even though the page is Admin, still considered "Account"

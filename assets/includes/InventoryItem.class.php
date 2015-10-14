@@ -21,43 +21,43 @@ class InventoryItem{
         $this->price = $arr[3];
         $this->description = $arr[4];
         $this->quantity = $arr[5];
-        $this->onSale = $arr[7];
-        $this->salePrice = $arr[8];
+        $this->onSale = $arr[6];
+        $this->salePrice = $arr[7];
     }//close __construct
 
     //TODO magic accessors / modifers? ask professor if okay to shorten code??
 
     /**************** MODIFERS *****************************************/
-    public function setId($id){
-        $this->id = $id;
-    }
-    public function setName($name){
-        $this->name = $name;
-    }//end setName
-
-    public function setPrice($price){
-        $this->price = $price;
-    }//end setprice
-
-    public function setImage($image){
-        $this->image = $image;
-    }//end setImage
-
-    public function setDescription($description){
-        $this->description = $description;
-    }//end setDescription
-
-    public function setQuantity($quantity){
-        $this->quantity = $quantity;
-    }//end setQuantity
-
-    public function setSalePrice($salePrice){
-        $this->salePrice = $salePrice;
-    }//end setSalePrice
-
-    public function setOnSale($onSale){
-        $this->onSale = $onSale;
-    }//end setOnSale
+//    public function setId($id){
+//        $this->id = $id;
+//    }
+//    public function setName($name){
+//        $this->name = $name;
+//    }//end setName
+//
+//    public function setPrice($price){
+//        $this->price = $price;
+//    }//end setprice
+//
+//    public function setImage($image){
+//        $this->image = $image;
+//    }//end setImage
+//
+//    public function setDescription($description){
+//        $this->description = $description;
+//    }//end setDescription
+//
+//    public function setQuantity($quantity){
+//        $this->quantity = $quantity;
+//    }//end setQuantity
+//
+//    public function setSalePrice($salePrice){
+//        $this->salePrice = $salePrice;
+//    }//end setSalePrice
+//
+//    public function setOnSale($onSale){
+//        $this->onSale = $onSale;
+//    }//end setOnSale
 
     /**************** ACCESSORS *****************************************/
     public function getId(){
@@ -93,12 +93,14 @@ class InventoryItem{
          * subtract % from 1 to get what the total sale price is
          * aka .9 * 10 = 9 is the equivalent of .1 * 10 = 1, then 10-1 = 9
         */
+
         if($this->onSale == 1) {
             $percent = 1 - ($this->salePrice * .01);
             $actualSalePrice = $this->price * $percent;
         }else{ $actualSalePrice = 0; }
 
-        return $actualSalePrice;
+        return round($actualSalePrice,2);
+
     }//end getSalePrice
     /**************** FUNCTIONS *****************************************/
 

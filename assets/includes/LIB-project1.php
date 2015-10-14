@@ -214,8 +214,7 @@ function getInventory($dbh, $isSale){
  * @param $id
  */
 function addToCart($dbh, $id){
-    //array
-    $id = $_GET['addToCart'];
+
     $params = array(":id" => $id);
     //check to see item exists to update count
     $num = checkExists($dbh, "SELECT quantity FROM cart WHERE itemId = :id", $params );
