@@ -238,6 +238,11 @@ function addToCart($dbh, $id){
     updateDeleteInsert($dbh, $query, $params);
 }//end addToCart
 
+/**
+ * displays current cart contents
+ * @param $dbh
+ * @return string
+ */
 function displayCart($dbh){
     $stmt = $dbh->prepare("SELECT t1.itemid, t1.name,  t1.image, t2.price, t1.description,
                             t4.quantity, t3.onsale, t3.salePrice FROM cart t4
@@ -255,10 +260,19 @@ function displayCart($dbh){
     }
 
     $cartDiv = new Paginator($cart);
+
     if(!isset($_GET['page'])){ $_GET['page'] = 1; }
-    $pageHTML = $cartDiv->displayPagination($_GET['page'], false, true);
+    $pageHTML .= $cartDiv->displayPagination($_GET['page'], false, true);
+
+    //TODO display cart TOTAL price
 
     return $pageHTML;
 
-}
+}//end displayCart
+
+function clearCart($dbh){
+    $arr = array();
+   updateDeleteInsert($dbh, "DELETE FROM cart", $arr);
+}//end clear cart
+
 

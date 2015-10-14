@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
 
-  <title><?php echo "E-Commerence:  " . $curr_page; ?></title>
-  <meta name="description" content="E-Commerence shop for all your shopping needs">
+  <title><?php echo "The MicroController Center:  " . $curr_page; ?></title>
+  <meta name="description" content="E-Commerence shop for all your microcontroller needs">
   <meta name="author" content="Julianna Gabler">
 
 
@@ -27,8 +27,10 @@
     //include navigation
     include "nav.php";
 
+
     //print out the page's HTML
     echo $pageHTML;
+
 ?>
 <!-- for later, if decide to do a footer
     <footer></footer>

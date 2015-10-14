@@ -9,6 +9,12 @@
 
     $dbh = openDBH();
 
+    //if set, clear the cart database table and unset variable for future use
+    if(isset($_GET['clearCart'])){
+        clearCart($dbh);
+        unset($_GET['clearCart']); //unset it so it'll pick up future ones
+    }
+
     $pageHTML = "<div class='container'>"; //TODO include in container, custom end div, new div for index only, rest are 1 div standard in template
     $pageHTML .= displayCart($dbh);
     $pageHTML .= "</div>";

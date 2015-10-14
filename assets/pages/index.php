@@ -26,7 +26,7 @@
     $saleDiv = new Paginator($sale);
     $pageHTML .= $saleDiv->displayPagination(1, true, false);
 
-    $pageHTML .= "</div></div><div class='jumbotron'><h2>MicroControllers Catalog</h2>";
+    $pageHTML .= "</div></div><div class='jumbotron'><h2>MicroControllers Catalog</h2><div id='inventory'>";
 
     //get items not on sale, 0 == false
     $notSale = getInventory($dbh, 0);
@@ -37,7 +37,7 @@
 
     $pageHTML .= $itemsDiv->displayPagination($_GET["page"], false, false);
 
-    $pageHTML .= "</div></div>";
+    $pageHTML .= "</div></div></div>";
 
     //include the template
     include "../includes/HTML_template.php";
