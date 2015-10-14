@@ -1,6 +1,4 @@
 <?php
-    //include for inventory item object
-    include "InventoryItem.class.php";
 
     class Paginator{
         private $itemsArray, $total, $page;
@@ -53,7 +51,7 @@
             $html = "<ul class='pagination'>";
 
 
-            for($i = 0; $i < $last + 1; $i++){
+            for($i = 0; $i < $last; $i++){
                 $html .= "<li";
 
                 //show active page
@@ -66,31 +64,35 @@
             return $html;
         }//end createLink
 
-        public function displayPagination($currPage){
-
-
+        public function displayPagination($currPage, $sale){
+            $css_arr = array(4 => 3, 5 =>2);
             $html = "<div class='row'>";
 
             $results = $this->getData($currPage);
+            if($sale == true) { $count = count($results) -1 ; }
+            else{$count = count($results);}
 
-            foreach($results as $item){
-                $obj = new InventoryItem($item);
+            for($i  = 0; $i < $count; $i++){
+                $obj = (object)$results[$i];
 
-                $html .= "<div class='col-md-5'>";
+               // if($sale == true){ $count -= 1; }
 
-                $html .= "<img src='" . $obj->getImage() . "alt='" . $obj->getName() . "' />";
-                $html .= "<h4>" . $obj->getName() . "</h4>";
-                $html .= "<p class='salePrice'>Sale Price:" . $obj->getSalePrice() . "</p><p class='originalSale'> Original price:" . $obj->getPrice() . "</p>";
-                $html .= "<p>Quantity: " . $obj->getQuantity() . "</p>";
-                $html .= "<p class='description'>Description:" . $obj->getDescription() . "</p>";
+                $html .= "<div class='col-sm-" .$css_arr[$count] ." inventoryItem'>";
 
+                $html .= "<a href='". $obj->getImage() . "'><img src='" . $obj->getImage(). "' alt='" . $obj->getName() . "' height='150' width='200' /></a>";
+                $html .= "<h3>" . $obj->getName() . "</h3>";
+                $html .= "<span> <em>Original price:</em> $" . $obj->getPrice() . "</span>";
+                $html .= "<br><span><em>Sale Price:</em> $" . $obj->getSalePrice() . "</span>";
+                $html .= "<br><span><em>Quantity:</em> " . $obj->getQuantity() . "</span>";
+                $html .= "<br><span><em>Description:</em> " . $obj->getDescription() . "</span>";
+                $html .= "<br><br><button class='btn btn-primary'>Add to Cart</button>";
                 $html .= "</div>";
             }
 
-            $html .= "</div>" . $this->createPages($currPage);
-        }
-    }
+            $html .= "</div>";
 
-
+            return $html;
+        }//end displayPagination
+    }//end class
 
 ?>

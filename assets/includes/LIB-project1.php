@@ -181,12 +181,12 @@ function removeSalesItem($dbh, $param){
 function getInventory($dbh, $isSale){
 
     //get all items not on sale and return
-    $stmnt = $dbh->prepare("SELECT t1.name,  t1.image, t2.price, t1.description, t2.quantity, t3.onsale, t3.salePrice FROM item t1 JOIN inventory t2 ON t1.itemId = t2.itemId JOIN itemsale t3 ON t2.itemId = t3.itemId WHERE t3.onsale = :onsale");
+    $stmnt = $dbh->prepare("SELECT t1.itemid, t1.name,  t1.image, t2.price, t1.description, t2.quantity, t3.onsale, t3.salePrice FROM item t1 JOIN inventory t2 ON t1.itemId = t2.itemId JOIN itemsale t3 ON t2.itemId = t3.itemId WHERE t3.onsale = :onsale");
     $stmnt->bindParam(":onsale", $isSale);
     $stmnt->execute();
 
     //empty array
-    $array = array(1);
+    $array = array();
 
     $result = $stmnt->fetchAll();
 
@@ -194,8 +194,34 @@ function getInventory($dbh, $isSale){
 
         $obj = new InventoryItem($row);
 
-        //$array[] = $obj;
+        $array[] = $obj;
     }
 
     return $array;
 }//end getInventory
+
+/**
+ * adds or updates item in cart
+ * @param $dbh
+ * @param $obj
+ */
+function addToCart($dbh, $obj){
+    //check to see item exists to update count
+    $num = checkExists($dbh);
+    //if item doesn't exist, insert into table
+    if($num ==0 ){ $query = "INSERT INTO CART (id, quantity) VALUES(:id, 1)"; }
+    //does exist, update table to quantity
+    else{ $query = "UPDATE CART SET quantity = :quantity WHERE id = :id";
+            $quantity = $num + 1;
+    }
+
+    $stmnt = $dbh->prepare($query);
+    $stmnt->bindParam(":id", $obj->getId());
+
+    //if num was greater than 0, bind quantity param
+    if($num > 0){
+        $stmnt->bindParam(":quantity", $quantity);
+    }
+
+    $stmnt->execute();
+}//end addToCart

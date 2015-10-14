@@ -6,7 +6,7 @@
  * to be displayed on the e-commerence site
  */
 class InventoryItem{
-    private $name,$price,$image,$description,$quantity,$onSale,$salePrice;
+    protected $id, $name,$price,$image,$description,$quantity,$onSale,$salePrice;
 
     /**
      * @param $arr
@@ -15,18 +15,22 @@ class InventoryItem{
         //TODO pass in as an array and iterate? for cleaner code??
 
         //set values
-        $this->name = $arr[0];
-        $this->image = $arr[1];
-        $this->price = $arr[2];
-        $this->description = $arr[3];
-        $this->quantity = $arr[4];
-        $this->onSale = $arr[5];
-        $this->salePrice = $arr[6];
+        $this->id = $arr[0];
+        $this->name = $arr[1];
+        $this->image = $arr[2];
+        $this->price = $arr[3];
+        $this->description = $arr[4];
+        $this->quantity = $arr[5];
+        $this->onSale = $arr[7];
+        $this->salePrice = $arr[8];
     }//close __construct
 
     //TODO magic accessors / modifers? ask professor if okay to shorten code??
 
     /**************** MODIFERS *****************************************/
+    public function setId($id){
+        $this->id = $id;
+    }
     public function setName($name){
         $this->name = $name;
     }//end setName
@@ -56,6 +60,10 @@ class InventoryItem{
     }//end setOnSale
 
     /**************** ACCESSORS *****************************************/
+    public function getId(){
+        return $this->id;
+    }//end getId
+
     public function getName(){
         return $this->name;
     }//end getName
@@ -85,7 +93,7 @@ class InventoryItem{
          * subtract % from 1 to get what the total sale price is
          * aka .9 * 10 = 9 is the equivalent of .1 * 10 = 1, then 10-1 = 9
         */
-        if($this->onsale == 1) {
+        if($this->onSale == 1) {
             $percent = 1 - ($this->salePrice * .01);
             $actualSalePrice = $this->price * $percent;
         }else{ $actualSalePrice = 0; }
