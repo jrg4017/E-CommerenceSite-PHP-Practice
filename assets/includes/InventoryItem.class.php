@@ -63,8 +63,6 @@ class InventoryItem{
         }else{ $actualSalePrice = 0; }
         //round up to nearest
         return round($actualSalePrice,2);
-
     }//end getSalePrice
-
 
 }//end InventoryItem class

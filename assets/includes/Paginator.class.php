@@ -5,7 +5,7 @@
  * for handling the php pagination of sale, catalog, and cart items
  */
     class Paginator{
-        private $itemsArray, $total, $page;
+        private $itemsArray, $total, $page, $totalPrice;
         private $limit = 5;
 
         /**
@@ -18,7 +18,13 @@
             $this->total = count($this->itemsArray);
         }//end __construct
 
-
+        /**
+         * get the total price
+         * @return mixed
+         */
+        public function getTotalPrice(){
+            return $this->totalPrice;
+        }//end getTotalPrice
 
         /**
          * get the data out of the array and display the current ones
@@ -49,8 +55,6 @@
          * @return string
          */
         public function createPageLink($page = 1){
-            //TODO just do get next five pages instead of pagination @ bottom
-
             //set the last available pagination page
             $last       = ceil( $this->total / $this->limit );
 
@@ -75,6 +79,7 @@
          * displays the actual objects in a grid format
          * @param int $currPage - default is one
          * @param $sale
+         * @param $cart
          * @return string
          */
         public function displayPagination($currPage = 1, $sale, $cart){
@@ -98,6 +103,13 @@
                 else{ $html .= $this->display($obj); }
 
                 $html .= "</form></div>";
+
+                //for calculating price
+                if($obj->getSalePrice() > 0){
+                    $this->totalPrice += $obj->getSalePrice();
+                }else{
+                    $this->totalPrice += $obj->getPrice();
+                }
             }
 
             //get button if cart isn't empty or read out message if it is
@@ -148,15 +160,14 @@
          * @return string
          */
         public function emptyCart($count, $cart){
-
+            $html = "";
             //if at cart page ($cart = true), on click, clear cart with link
             //if cart is 0 don't display button and print out message
-            if($cart == true && $count !== 0){ $html .= "<div class='col-lg-6'><br><a class='btn btn-primary'  name='clearCart' href='?clearCart=true' >Empty Cart</a></div>";}
+            if($cart == true && $count !== 0){ $html .= "<div class='col-lg-8'><h3>Total Price: $" . $this->getTotalPrice() . "</h3></div><div class='col-lg-6'><br><a class='btn btn-primary'  name='clearCart' href='?clearCart=true' >Empty Cart</a></div>";}
 
             if($count === 0 ){ $html .= "<h2>You currently have no items in your cart!</h2><div class='col-lg-6'><br><a class='btn btn-primary'  href='index.php' >Go back</a></div>"; }
 
             return $html;
-
         }//end emptyCart
 
     }//end Paginator class
