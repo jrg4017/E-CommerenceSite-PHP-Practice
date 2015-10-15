@@ -79,6 +79,26 @@
         }//end updateDeleteInsert
 
         /**
+         * select statement
+         * @param $query
+         * @param null $params
+         * @return mixed
+         */
+        function select($query, $params = null){
+            $stmt =$this->getDbh()->prepare($query);
+
+            if($params != null){ //if null then don't bind
+                foreach($params as $key=>$val){
+                    $stmt->bindParam($key, $val);
+                }
+            }
+            $stmt->execute();
+            $rs = $stmt->fetchAll();
+
+            return $rs;
+        }//end select
+
+        /**
          * gets the number of current
          * @return $count - the number rows in sales
          */

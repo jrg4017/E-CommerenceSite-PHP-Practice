@@ -52,6 +52,10 @@ class InventoryItem{
         return $this->onSale;
     }//end get OnSale
 
+    public function getSalePercent(){
+        return $this->salePrice;
+    }//end getSalePercent
+
     public function getSalePrice(){
         /* sale price is consider to be a percentage off so 10 -> 10% off
          * subtract % from 1 to get what the total sale price is

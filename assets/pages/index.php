@@ -18,7 +18,7 @@
     $curr_page = "Home"; //even though the page is Admin, still considered "Account"
 
     //git divs for sales / category
-    getSalesCatalog($dbObj, $curr_page);
+    $pageHTML = getSalesCatalog($dbObj, $curr_page);
 
     //include the template
     include "../includes/HTML_template.php";

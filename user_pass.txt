@@ -1,0 +1,9 @@
+Julianna Gabler
+
+users table
+
+user: admin@rit.edu
+pass: admin
+
+user: manager@microntroller.center
+pass: raspberryPiRox
